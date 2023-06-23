@@ -1,0 +1,1 @@
+module.exports = ({ $, element, selector, className }) => $(element).find(selector).attr("class") === className ? "damage" : "Profit"
