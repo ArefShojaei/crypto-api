@@ -3,6 +3,7 @@ const cheerio = require('cheerio');
 const fs = require('fs/promises');
 const path = require('path');
 const { NODE_ENV } = process.env
+const checkClassAttr = require('./utils/checkAttributeClass-util');
 
 // check Mode ENV ( Dev | Prod )
 const headless = NODE_ENV === "development" ? false : true
@@ -74,27 +75,42 @@ module.exports = async () => {
          * Growth-status at 7 days
          */
         $("table > tbody > tr").each((index, coins) => {
-            $(coins).map((index, coins) => {
+            $(coins).map((index, coin) => {
                 coinsList.push({
-                    id : +$(coins).find("td:nth-child(2) > p").text(),
-                    url : "https://coinmarketcap.com" + $(coins).find("td:nth-child(3) div > a").attr("href"),
-                    logo : $(coins).find("td:nth-child(3) div > a > div > img").attr("src"),
-                    chart : $(coins).find("td:nth-last-child(2) a > img").attr("src"),
-                    symbol : $(coins).find("td:nth-child(3) a img + div > div > p").text(),
-                    name : $(coins).find("td:nth-child(3) a img + div > p").text(),
-                    price : $(coins).find("td:nth-child(4) span").text(),
+                    id : +$(coin).find("td:nth-child(2) > p").text(),
+                    url : "https://coinmarketcap.com" + $(coin).find("td:nth-child(3) div > a").attr("href"),
+                    logo : $(coin).find("td:nth-child(3) div > a > div > img").attr("src"),
+                    chart : $(coin).find("td:nth-last-child(2) a > img").attr("src"),
+                    symbol : $(coin).find("td:nth-child(3) a img + div > div > p").text(),
+                    name : $(coin).find("td:nth-child(3) a img + div > p").text(),
+                    price : $(coin).find("td:nth-child(4) span").text(),
                     growthStatus : {
                         at_1h : {
-                            type : $(coins).find("td:nth-child(5) span > span").hasClass("icon-Caret-down") ? "damage" : "Profit",
-                            value : $(coins).find("td:nth-child(5) span").text()
+                            type : checkClassAttr({ 
+                                $, 
+                                element : coin, 
+                                selector : "td:nth-child(5) span > span", 
+                                className : "icon-Caret-down"
+                            }),
+                            value : $(coin).find("td:nth-child(5) span").text()
                         },
                         at_24h : {
-                            type : $(coins).find("td:nth-child(6) span > span").hasClass("icon-Caret-down") ? "damage" : "Profit",
-                            value : $(coins).find("td:nth-child(6) span").text()
+                            type : checkClassAttr({ 
+                                $, 
+                                element : coin, 
+                                selector : "td:nth-child(6) span > span", 
+                                className : "icon-Caret-down"
+                            }),
+                            value : $(coin).find("td:nth-child(6) span").text()
                         },
                         at_7d : {
-                            type : $(coins).find("td:nth-child(7) span > span").hasClass("icon-Caret-down") ? "damage" : "Profit",
-                            value : $(coins).find("td:nth-child(7) span").text()
+                            type : checkClassAttr({ 
+                                $, 
+                                element : coin, 
+                                selector : "td:nth-child(7) span > span", 
+                                className : "icon-Caret-down"
+                            }),
+                            value : $(coin).find("td:nth-child(7) span").text()
                         },
                     } 
                 })
